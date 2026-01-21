@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>기술 블로그</title>
+    <meta name="description" content="프로젝트 링크 모음 및 기술 블로그">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>기술 블로그 | 프로젝트 링크 모음 및 기술 블로그</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="기술 블로그" />
+<meta name="author" content="Your Name" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="프로젝트 링크 모음 및 기술 블로그" />
+<meta property="og:description" content="프로젝트 링크 모음 및 기술 블로그" />
+<link rel="canonical" href="http://localhost:4000/" />
+<meta property="og:url" content="http://localhost:4000/" />
+<meta property="og:site_name" content="기술 블로그" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="기술 블로그" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","author":{"@type":"Person","name":"Your Name"},"description":"프로젝트 링크 모음 및 기술 블로그","headline":"기술 블로그","name":"기술 블로그","url":"http://localhost:4000/"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrapper">
+        <nav class="site-nav">
+          <a class="site-title" href="/">기술 블로그</a>
+          <div>
+            <a href="/">홈</a>
+            <a href="/projects">프로젝트</a>
+            <a href="/about">소개</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="home">
+  <div class="hero-section">
+    <h1 class="page-heading">기술 블로그</h1>
+    <p class="page-description">프로젝트 링크 모음 및 기술 블로그</p>
+  </div>
+
+  <div class="main-content">
+    <section class="projects-section">
+      <div class="section-header">
+        <h2>기술자료 모음</h2>
+        <button class="search-icon-btn" onclick="openSearchModal()" aria-label="검색">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </button>
+      </div>
+      
+      <!-- 전체 화면 검색 모달 -->
+      <div id="search-modal" class="search-modal">
+        <div class="search-modal-content">
+          <button class="search-modal-close" onclick="closeSearchModal()">×</button>
+          <div class="search-modal-center">
+            <div class="search-modal-input-container">
+              <input 
+                type="text" 
+                id="search-modal-input" 
+                class="search-modal-input" 
+                placeholder="검색어를 입력해주세요."
+                autocomplete="off"
+              />
+              <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+            </div>
+            <div class="search-modal-footer">
+              <a href="#" onclick="closeSearchModal(); return false;" class="back-link">돌아가기</a>
+            </div>
+          </div>
+          <div class="search-results-container" id="search-results-container">
+            <!-- 검색 결과가 여기에 표시됩니다 -->
+          </div>
+        </div>
+      </div>
+      
+      <div class="tag-filter-container" id="tag-filter-container">
+        <!-- 태그 필터 버튼들이 여기에 동적으로 로드됩니다 -->
+      </div>
+      
+      <div class="projects-list-container">
+        <div class="projects-grid" id="projects-grid">
+          <!-- 프로젝트 카드들이 여기에 동적으로 로드됩니다 -->
+        </div>
+      </div>
+    </section>
+
+    
+  </div>
+</div>
+
+<script>
+  let allProjects = [];
+  let selectedTag = null;
+  let searchQuery = '';
+
+  // 전체 화면 검색 모달 열기
+  function openSearchModal() {
+    const modal = document.getElementById('search-modal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    
+    // 모달 입력창에 포커스
+    setTimeout(() => {
+      const modalInput = document.getElementById('search-modal-input');
+      modalInput.focus();
+    }, 100);
+  }
+
+  // 전체 화면 검색 모달 닫기
+  function closeSearchModal() {
+    const modal = document.getElementById('search-modal');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+    
+    // 검색어 초기화
+    const modalInput = document.getElementById('search-modal-input');
+    modalInput.value = '';
+    searchQuery = '';
+    displaySearchResults([]);
+    applyFilters();
+  }
+
+  // ESC 키로 모달 닫기
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const modal = document.getElementById('search-modal');
+      if (modal.style.display === 'flex') {
+        closeSearchModal();
+      }
+    }
+  });
+
+  // 프로젝트 데이터 로드
+  fetch('/projects.json')
+    .then(response => response.json())
+    .then(data => {
+      allProjects = data.projects || [];
+      
+      // 태그 필터 생성
+      createTagFilters(allProjects);
+      
+      // 모달 검색 입력 이벤트 리스너
+      const modalSearchInput = document.getElementById('search-modal-input');
+      modalSearchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value.trim().toLowerCase();
+        performSearch();
+      });
+      
+      // 프로젝트 표시
+      displayProjects(allProjects);
+    })
+    .catch(error => {
+      console.error('프로젝트 데이터를 불러오는 중 오류가 발생했습니다:', error);
+      document.getElementById('projects-grid').innerHTML = 
+        '<p class="no-projects">프로젝트 데이터를 불러올 수 없습니다.</p>';
+    });
+
+  function createTagFilters(projects) {
+    const tagContainer = document.getElementById('tag-filter-container');
+    const tagSet = new Set();
+    
+    // 모든 프로젝트에서 태그 수집
+    projects.forEach(project => {
+      if (project.tags && Array.isArray(project.tags)) {
+        project.tags.forEach(tag => tagSet.add(tag));
+      }
+    });
+    
+    // "전체" 버튼 추가
+    const allButton = document.createElement('button');
+    allButton.className = 'tag-filter-btn active';
+    allButton.textContent = '전체';
+    allButton.onclick = () => filterByTag(null);
+    tagContainer.appendChild(allButton);
+    
+    // 태그 버튼들 추가
+    Array.from(tagSet).sort().forEach(tag => {
+      const button = document.createElement('button');
+      button.className = 'tag-filter-btn';
+      button.textContent = tag;
+      button.onclick = () => filterByTag(tag);
+      tagContainer.appendChild(button);
+    });
+  }
+
+  function filterByTag(tag) {
+    selectedTag = tag;
+    
+    // 버튼 활성화 상태 업데이트
+    document.querySelectorAll('.tag-filter-btn').forEach(btn => {
+      btn.classList.remove('active');
+      if ((tag === null && btn.textContent === '전체') || 
+          (tag !== null && btn.textContent === tag)) {
+        btn.classList.add('active');
+      }
+    });
+    
+    applyFilters();
+  }
+
+  function performSearch() {
+    if (!searchQuery) {
+      displaySearchResults([]);
+      return;
+    }
+
+    const filteredProjects = allProjects.filter(project => {
+      const nameMatch = project.name.toLowerCase().includes(searchQuery);
+      const descriptionMatch = project.description 
+        ? project.description.toLowerCase().includes(searchQuery)
+        : false;
+      return nameMatch || descriptionMatch;
+    });
+
+    displaySearchResults(filteredProjects);
+  }
+
+  function applyFilters() {
+    let filteredProjects = allProjects;
+    
+    // 태그 필터 적용
+    if (selectedTag !== null) {
+      filteredProjects = filteredProjects.filter(project => 
+        project.tags && project.tags.includes(selectedTag)
+      );
+    }
+    
+    // 검색어 필터 적용 (제목과 설명 모두 검색)
+    if (searchQuery) {
+      filteredProjects = filteredProjects.filter(project => {
+        const nameMatch = project.name.toLowerCase().includes(searchQuery);
+        const descriptionMatch = project.description 
+          ? project.description.toLowerCase().includes(searchQuery)
+          : false;
+        return nameMatch || descriptionMatch;
+      });
+    }
+    
+    displayProjects(filteredProjects);
+  }
+
+  function displaySearchResults(projects) {
+    const resultsContainer = document.getElementById('search-results-container');
+    resultsContainer.innerHTML = '';
+
+    if (projects.length === 0 && searchQuery) {
+      resultsContainer.innerHTML = '<p class="no-search-results">검색 결과가 없습니다.</p>';
+      return;
+    }
+
+    if (projects.length === 0) {
+      return;
+    }
+
+    projects.forEach(project => {
+      const resultItem = createSearchResultItem(project);
+      resultsContainer.appendChild(resultItem);
+    });
+  }
+
+  function createSearchResultItem(project) {
+    const item = document.createElement('div');
+    item.className = 'search-result-item';
+    
+    const tags = project.tags ? project.tags.map(tag => 
+      `<span class="search-result-tag">${tag}</span>`
+    ).join('') : '';
+    
+    const formatDate = (dateString) => {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}년 ${month}월 ${day}일`;
+    };
+    
+    item.innerHTML = `
+      <h3 class="search-result-title">${project.name}</h3>
+      ${tags ? `<div class="search-result-tags">${tags}</div>` : ''}
+      <p class="search-result-description">${project.description || '설명이 없습니다.'}</p>
+      <div class="search-result-links">
+        ${project.github ? `<a href="${project.github}" target="_blank" class="search-result-link">GitHub</a>` : ''}
+        ${project.demo ? `<a href="${project.demo}" target="_blank" class="search-result-link">Demo</a>` : ''}
+        ${project.docs ? `<a href="${project.docs}" target="_blank" class="search-result-link">Docs</a>` : ''}
+      </div>
+      ${project.addedDate ? `<div class="search-result-date">${formatDate(project.addedDate)}</div>` : ''}
+    `;
+    
+    return item;
+  }
+
+  function displayProjects(projects) {
+    const grid = document.getElementById('projects-grid');
+    grid.innerHTML = '';
+    
+    if (projects.length === 0) {
+      const message = searchQuery 
+        ? `"${searchQuery}" 검색 결과가 없습니다.`
+        : selectedTag 
+          ? '해당 태그의 프로젝트가 없습니다.'
+          : '프로젝트가 없습니다.';
+      grid.innerHTML = `<p class="no-projects">${message}</p>`;
+      return;
+    }
+    
+    projects.forEach(project => {
+      const card = createProjectCard(project);
+      grid.appendChild(card);
+    });
+  }
+
+  function createProjectCard(project) {
+    const card = document.createElement('div');
+    card.className = 'project-card';
+    
+    const tags = project.tags ? project.tags.map(tag => 
+      `<span class="project-tag">${tag}</span>`
+    ).join('') : '';
+    
+    // 날짜 포맷팅 함수
+    const formatDate = (dateString) => {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}년 ${month}월 ${day}일`;
+    };
+    
+    const formattedDate = formatDate(project.addedDate);
+    
+    card.innerHTML = `
+      <div class="project-header">
+        <h3 class="project-title">${project.name}</h3>
+        ${tags ? `<div class="project-tags">${tags}</div>` : ''}
+      </div>
+      <p class="project-description">${project.description || '설명이 없습니다.'}</p>
+      <div class="project-links">
+        ${project.github ? `<a href="${project.github}" target="_blank" class="project-link github-link">GitHub</a>` : ''}
+        ${project.demo ? `<a href="${project.demo}" target="_blank" class="project-link demo-link">Demo</a>` : ''}
+        ${project.docs ? `<a href="${project.docs}" target="_blank" class="project-link docs-link">Docs</a>` : ''}
+      </div>
+      <div class="project-meta">
+        ${formattedDate ? `<span class="project-date">작성일: ${formattedDate}</span>` : ''}
+        ${project.addedBy ? `<span class="project-added-by"> | 추가: ${project.addedBy}</span>` : ''}
+      </div>
+    `;
+    
+    return card;
+  }
+</script>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrapper">
+        <p>&copy; 2026 기술 블로그. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>

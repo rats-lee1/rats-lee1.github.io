@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>프로젝트 모음 | 기술 블로그</title>
+    <meta name="description" content="프로젝트 링크 모음 및 기술 블로그">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>프로젝트 모음 | 기술 블로그</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="프로젝트 모음" />
+<meta name="author" content="Your Name" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="프로젝트 링크 모음 및 기술 블로그" />
+<meta property="og:description" content="프로젝트 링크 모음 및 기술 블로그" />
+<link rel="canonical" href="http://localhost:4000/projects.html" />
+<meta property="og:url" content="http://localhost:4000/projects.html" />
+<meta property="og:site_name" content="기술 블로그" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="프로젝트 모음" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","author":{"@type":"Person","name":"Your Name"},"description":"프로젝트 링크 모음 및 기술 블로그","headline":"프로젝트 모음","url":"http://localhost:4000/projects.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrapper">
+        <nav class="site-nav">
+          <a class="site-title" href="/">기술 블로그</a>
+          <div>
+            <a href="/">홈</a>
+            <a href="/projects">프로젝트</a>
+            <a href="/about">소개</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="projects-page">
+  <div class="main-content">
+    <h1>기술자료 모음</h1>
+    <p class="section-description">팀원들이 공유한 기술자료를 정리한 링크 모음입니다.</p>
+    
+    <div class="projects-grid" id="projects-grid">
+      <!-- 프로젝트 카드들이 여기에 동적으로 로드됩니다 -->
+    </div>
+  </div>
+</div>
+
+<script>
+  // 프로젝트 데이터 로드
+  fetch('/projects.json')
+    .then(response => response.json())
+    .then(data => {
+      const grid = document.getElementById('projects-grid');
+      if (data.projects && data.projects.length > 0) {
+        data.projects.forEach(project => {
+          const card = createProjectCard(project);
+          grid.appendChild(card);
+        });
+      } else {
+        grid.innerHTML = '<p class="no-projects">아직 등록된 프로젝트가 없습니다.</p>';
+      }
+    })
+    .catch(error => {
+      console.error('프로젝트 데이터를 불러오는 중 오류가 발생했습니다:', error);
+      document.getElementById('projects-grid').innerHTML = 
+        '<p class="no-projects">프로젝트 데이터를 불러올 수 없습니다.</p>';
+    });
+
+  function createProjectCard(project) {
+    const card = document.createElement('div');
+    card.className = 'project-card';
+    
+    const tags = project.tags ? project.tags.map(tag => 
+      `<span class="project-tag">${tag}</span>`
+    ).join('') : '';
+    
+    card.innerHTML = `
+      <div class="project-header">
+        <h3 class="project-title">${project.name}</h3>
+        ${tags ? `<div class="project-tags">${tags}</div>` : ''}
+      </div>
+      <p class="project-description">${project.description || '설명이 없습니다.'}</p>
+      <div class="project-links">
+        ${project.github ? `<a href="${project.github}" target="_blank" class="project-link github-link">GitHub</a>` : ''}
+        ${project.demo ? `<a href="${project.demo}" target="_blank" class="project-link demo-link">Demo</a>` : ''}
+        ${project.docs ? `<a href="${project.docs}" target="_blank" class="project-link docs-link">Docs</a>` : ''}
+      </div>
+      ${project.addedBy ? `<div class="project-meta">추가: ${project.addedBy} | ${project.addedDate || ''}</div>` : ''}
+    `;
+    
+    return card;
+  }
+</script>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrapper">
+        <p>&copy; 2026 기술 블로그. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>
