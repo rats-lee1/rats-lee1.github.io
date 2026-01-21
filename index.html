@@ -12,11 +12,18 @@ layout: default
     <section class="projects-section">
       <h2>기술자료 모음</h2>
       
-      <div class="projects-grid" id="projects-grid">
-        <!-- 프로젝트 카드들이 여기에 동적으로 로드됩니다 -->
+      <div class="tag-filter-container" id="tag-filter-container">
+        <!-- 태그 필터 버튼들이 여기에 동적으로 로드됩니다 -->
+      </div>
+      
+      <div class="projects-list-container">
+        <div class="projects-grid" id="projects-grid">
+          <!-- 프로젝트 카드들이 여기에 동적으로 로드됩니다 -->
+        </div>
       </div>
     </section>
 
+    {% comment %}
     <section class="posts-section">
       <h2>최근 포스트</h2>
       <ul class="post-list">
@@ -30,29 +37,96 @@ layout: default
         {% endfor %}
       </ul>
     </section>
+    {% endcomment %}
   </div>
 </div>
 
 <script>
+  let allProjects = [];
+  let selectedTag = null;
+
   // 프로젝트 데이터 로드
   fetch('{{ "/projects.json" | relative_url }}')
     .then(response => response.json())
     .then(data => {
-      const grid = document.getElementById('projects-grid');
-      if (data.projects && data.projects.length > 0) {
-        data.projects.forEach(project => {
-          const card = createProjectCard(project);
-          grid.appendChild(card);
-        });
-      } else {
-        grid.innerHTML = '<p class="no-projects">아직 등록된 프로젝트가 없습니다.</p>';
-      }
+      allProjects = data.projects || [];
+      
+      // 태그 필터 생성
+      createTagFilters(allProjects);
+      
+      // 프로젝트 표시
+      displayProjects(allProjects);
     })
     .catch(error => {
       console.error('프로젝트 데이터를 불러오는 중 오류가 발생했습니다:', error);
       document.getElementById('projects-grid').innerHTML = 
         '<p class="no-projects">프로젝트 데이터를 불러올 수 없습니다.</p>';
     });
+
+  function createTagFilters(projects) {
+    const tagContainer = document.getElementById('tag-filter-container');
+    const tagSet = new Set();
+    
+    // 모든 프로젝트에서 태그 수집
+    projects.forEach(project => {
+      if (project.tags && Array.isArray(project.tags)) {
+        project.tags.forEach(tag => tagSet.add(tag));
+      }
+    });
+    
+    // "전체" 버튼 추가
+    const allButton = document.createElement('button');
+    allButton.className = 'tag-filter-btn active';
+    allButton.textContent = '전체';
+    allButton.onclick = () => filterByTag(null);
+    tagContainer.appendChild(allButton);
+    
+    // 태그 버튼들 추가
+    Array.from(tagSet).sort().forEach(tag => {
+      const button = document.createElement('button');
+      button.className = 'tag-filter-btn';
+      button.textContent = tag;
+      button.onclick = () => filterByTag(tag);
+      tagContainer.appendChild(button);
+    });
+  }
+
+  function filterByTag(tag) {
+    selectedTag = tag;
+    
+    // 버튼 활성화 상태 업데이트
+    document.querySelectorAll('.tag-filter-btn').forEach(btn => {
+      btn.classList.remove('active');
+      if ((tag === null && btn.textContent === '전체') || 
+          (tag !== null && btn.textContent === tag)) {
+        btn.classList.add('active');
+      }
+    });
+    
+    // 프로젝트 필터링
+    const filteredProjects = tag === null 
+      ? allProjects 
+      : allProjects.filter(project => 
+          project.tags && project.tags.includes(tag)
+        );
+    
+    displayProjects(filteredProjects);
+  }
+
+  function displayProjects(projects) {
+    const grid = document.getElementById('projects-grid');
+    grid.innerHTML = '';
+    
+    if (projects.length === 0) {
+      grid.innerHTML = '<p class="no-projects">해당 태그의 프로젝트가 없습니다.</p>';
+      return;
+    }
+    
+    projects.forEach(project => {
+      const card = createProjectCard(project);
+      grid.appendChild(card);
+    });
+  }
 
   function createProjectCard(project) {
     const card = document.createElement('div');
@@ -61,6 +135,18 @@ layout: default
     const tags = project.tags ? project.tags.map(tag => 
       `<span class="project-tag">${tag}</span>`
     ).join('') : '';
+    
+    // 날짜 포맷팅 함수
+    const formatDate = (dateString) => {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}년 ${month}월 ${day}일`;
+    };
+    
+    const formattedDate = formatDate(project.addedDate);
     
     card.innerHTML = `
       <div class="project-header">
@@ -73,7 +159,10 @@ layout: default
         ${project.demo ? `<a href="${project.demo}" target="_blank" class="project-link demo-link">Demo</a>` : ''}
         ${project.docs ? `<a href="${project.docs}" target="_blank" class="project-link docs-link">Docs</a>` : ''}
       </div>
-      ${project.addedBy ? `<div class="project-meta">추가: ${project.addedBy} | ${project.addedDate || ''}</div>` : ''}
+      <div class="project-meta">
+        ${formattedDate ? `<span class="project-date">작성일: ${formattedDate}</span>` : ''}
+        ${project.addedBy ? `<span class="project-added-by"> | 추가: ${project.addedBy}</span>` : ''}
+      </div>
     `;
     
     return card;

@@ -9,6 +9,26 @@
       "tags": ["AI", "Memory", "Graph-Vector", "Python", "API"],
       "addedBy": "",
       "addedDate": "2026-01-21"
+    },
+    {
+        "name": "Azure OpenAI ACA Load Balancer",
+        "description": "Azure OpenAI 서비스 엔드포인트를 위해 **스마트 로드 밸런싱**을 제공하는 샘플 프로젝트입니다. 여러 Azure OpenAI 백엔드를 단일 엔드포인트로 노출하고, 상태에 따라 요청을 우선 처리하거나 페일오버하는 기능을 구현해, 토큰/요청 제한(429 에러) 상황에서도 안정적으로 서비스를 유지할 수 있도록 도와줍니다.",
+        "github": "https://github.com/Azure-Samples/openai-aca-lb",
+        "demo": "",
+        "docs": "https://github.com/Azure-Samples/openai-aca-lb#readme",
+        "tags": ["Azure", "OpenAI", "Load Balancer", "Container Apps", "YARP", "C#"],
+        "addedBy": "",
+        "addedDate": "2026-01-21"
+    },
+    {
+        "name": "BMAD-METHOD",
+        "description": "AI 중심의 애자일 개발 방법론 및 프레임워크로, 다양한 전문 AI 에이전트와 구조화된 워크플로우를 통해 소프트웨어 기획부터 구현까지 전체 개발 라이프사이클을 지원합니다.",
+        "github": "https://github.com/bmad-code-org/BMAD-METHOD",
+        "demo": "",
+        "docs": "https://docs.bmad-method.org/",
+        "tags": ["AI", "Agile", "Agents", "Workflows", "Node.js"],
+        "addedBy": "",
+        "addedDate": "2026-01-21"
     }
   ]
 }
