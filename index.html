@@ -1,0 +1,81 @@
+---
+layout: default
+---
+
+<div class="home">
+  <div class="hero-section">
+    <h1 class="page-heading">{{ site.title }}</h1>
+    <p class="page-description">{{ site.description }}</p>
+  </div>
+
+  <div class="main-content">
+    <section class="projects-section">
+      <h2>기술자료 모음</h2>
+      
+      <div class="projects-grid" id="projects-grid">
+        <!-- 프로젝트 카드들이 여기에 동적으로 로드됩니다 -->
+      </div>
+    </section>
+
+    <section class="posts-section">
+      <h2>최근 포스트</h2>
+      <ul class="post-list">
+        {% for post in site.posts limit:5 %}
+        <li>
+          <span class="post-meta">{{ post.date | date: "%Y년 %m월 %d일" }}</span>
+          <h3>
+            <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+          </h3>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+  </div>
+</div>
+
+<script>
+  // 프로젝트 데이터 로드
+  fetch('{{ "/projects.json" | relative_url }}')
+    .then(response => response.json())
+    .then(data => {
+      const grid = document.getElementById('projects-grid');
+      if (data.projects && data.projects.length > 0) {
+        data.projects.forEach(project => {
+          const card = createProjectCard(project);
+          grid.appendChild(card);
+        });
+      } else {
+        grid.innerHTML = '<p class="no-projects">아직 등록된 프로젝트가 없습니다.</p>';
+      }
+    })
+    .catch(error => {
+      console.error('프로젝트 데이터를 불러오는 중 오류가 발생했습니다:', error);
+      document.getElementById('projects-grid').innerHTML = 
+        '<p class="no-projects">프로젝트 데이터를 불러올 수 없습니다.</p>';
+    });
+
+  function createProjectCard(project) {
+    const card = document.createElement('div');
+    card.className = 'project-card';
+    
+    const tags = project.tags ? project.tags.map(tag => 
+      `<span class="project-tag">${tag}</span>`
+    ).join('') : '';
+    
+    card.innerHTML = `
+      <div class="project-header">
+        <h3 class="project-title">${project.name}</h3>
+        ${tags ? `<div class="project-tags">${tags}</div>` : ''}
+      </div>
+      <p class="project-description">${project.description || '설명이 없습니다.'}</p>
+      <div class="project-links">
+        ${project.github ? `<a href="${project.github}" target="_blank" class="project-link github-link">GitHub</a>` : ''}
+        ${project.demo ? `<a href="${project.demo}" target="_blank" class="project-link demo-link">Demo</a>` : ''}
+        ${project.docs ? `<a href="${project.docs}" target="_blank" class="project-link docs-link">Docs</a>` : ''}
+      </div>
+      ${project.addedBy ? `<div class="project-meta">추가: ${project.addedBy} | ${project.addedDate || ''}</div>` : ''}
+    `;
+    
+    return card;
+  }
+</script>

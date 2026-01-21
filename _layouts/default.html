@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+    <meta name="description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
+    <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+    {% seo %}
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrapper">
+        <nav class="site-nav">
+          <a class="site-title" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+          <div>
+            <a href="{{ '/' | relative_url }}">홈</a>
+            <a href="{{ '/projects' | relative_url }}">프로젝트</a>
+            <a href="{{ '/about' | relative_url }}">소개</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      {{ content }}
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrapper">
+        <p>&copy; {{ 'now' | date: "%Y" }} {{ site.title }}. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>

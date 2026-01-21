@@ -1,0 +1,21 @@
+title: 기술 블로그
+description: 프로젝트 링크 모음 및 기술 블로그
+author: Your Name
+url: https://yourusername.github.io
+baseurl: ""
+
+# GitHub Pages 설정
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+# 프로젝트 링크 페이지 설정
+collections:
+  projects:
+    output: true
+    permalink: /projects/:name/
+
+# 기타 설정
+markdown: kramdown
+highlighter: rouge

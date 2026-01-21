@@ -1,0 +1,51 @@
+---
+layout: default
+title: 소개
+---
+
+<div class="about-page">
+  <div class="main-content">
+    <h1>소개</h1>
+    <div class="about-content">
+      <p>이 블로그는 팀원들이 공유한 기술자료들을 정리하고 링크를 모아두는 공간입니다.</p>
+      
+      <h2>프로젝트 추가 방법</h2>
+      <p>새로운 프로젝트를 추가하려면 <code>projects.json</code> 파일을 수정하세요:</p>
+      <pre><code>{
+  "name": "프로젝트 이름",
+  "description": "프로젝트 설명",
+  "github": "https://github.com/username/repo",
+  "demo": "https://demo-url.com",
+  "docs": "https://docs-url.com",
+  "tags": ["태그1", "태그2"],
+  "addedBy": "추가한 사람",
+  "addedDate": "2024-01-01"
+}</code></pre>
+    </div>
+  </div>
+</div>
+
+<style>
+.about-content {
+  max-width: 800px;
+  margin: 2rem 0;
+}
+
+.about-content h2 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.about-content pre {
+  background: var(--surface);
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.about-content code {
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 0.9rem;
+}
+</style>
