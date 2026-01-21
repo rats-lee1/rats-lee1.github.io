@@ -10,7 +10,43 @@ layout: default
 
   <div class="main-content">
     <section class="projects-section">
-      <h2>기술자료 모음</h2>
+      <div class="section-header">
+        <h2>기술자료 모음</h2>
+        <button class="search-icon-btn" onclick="openSearchModal()" aria-label="검색">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </button>
+      </div>
+      
+      <!-- 전체 화면 검색 모달 -->
+      <div id="search-modal" class="search-modal">
+        <div class="search-modal-content">
+          <button class="search-modal-close" onclick="closeSearchModal()">×</button>
+          <div class="search-modal-center">
+            <div class="search-modal-input-container">
+              <input 
+                type="text" 
+                id="search-modal-input" 
+                class="search-modal-input" 
+                placeholder="검색어를 입력해주세요."
+                autocomplete="off"
+              />
+              <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+            </div>
+            <div class="search-modal-footer">
+              <a href="#" onclick="closeSearchModal(); return false;" class="back-link">돌아가기</a>
+            </div>
+          </div>
+          <div class="search-results-container" id="search-results-container">
+            <!-- 검색 결과가 여기에 표시됩니다 -->
+          </div>
+        </div>
+      </div>
       
       <div class="tag-filter-container" id="tag-filter-container">
         <!-- 태그 필터 버튼들이 여기에 동적으로 로드됩니다 -->
@@ -44,6 +80,44 @@ layout: default
 <script>
   let allProjects = [];
   let selectedTag = null;
+  let searchQuery = '';
+
+  // 전체 화면 검색 모달 열기
+  function openSearchModal() {
+    const modal = document.getElementById('search-modal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    
+    // 모달 입력창에 포커스
+    setTimeout(() => {
+      const modalInput = document.getElementById('search-modal-input');
+      modalInput.focus();
+    }, 100);
+  }
+
+  // 전체 화면 검색 모달 닫기
+  function closeSearchModal() {
+    const modal = document.getElementById('search-modal');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+    
+    // 검색어 초기화
+    const modalInput = document.getElementById('search-modal-input');
+    modalInput.value = '';
+    searchQuery = '';
+    displaySearchResults([]);
+    applyFilters();
+  }
+
+  // ESC 키로 모달 닫기
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const modal = document.getElementById('search-modal');
+      if (modal.style.display === 'flex') {
+        closeSearchModal();
+      }
+    }
+  });
 
   // 프로젝트 데이터 로드
   fetch('{{ "/projects.json" | relative_url }}')
@@ -53,6 +127,13 @@ layout: default
       
       // 태그 필터 생성
       createTagFilters(allProjects);
+      
+      // 모달 검색 입력 이벤트 리스너
+      const modalSearchInput = document.getElementById('search-modal-input');
+      modalSearchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value.trim().toLowerCase();
+        performSearch();
+      });
       
       // 프로젝트 표시
       displayProjects(allProjects);
@@ -103,14 +184,99 @@ layout: default
       }
     });
     
-    // 프로젝트 필터링
-    const filteredProjects = tag === null 
-      ? allProjects 
-      : allProjects.filter(project => 
-          project.tags && project.tags.includes(tag)
-        );
+    applyFilters();
+  }
+
+  function performSearch() {
+    if (!searchQuery) {
+      displaySearchResults([]);
+      return;
+    }
+
+    const filteredProjects = allProjects.filter(project => {
+      const nameMatch = project.name.toLowerCase().includes(searchQuery);
+      const descriptionMatch = project.description 
+        ? project.description.toLowerCase().includes(searchQuery)
+        : false;
+      return nameMatch || descriptionMatch;
+    });
+
+    displaySearchResults(filteredProjects);
+  }
+
+  function applyFilters() {
+    let filteredProjects = allProjects;
+    
+    // 태그 필터 적용
+    if (selectedTag !== null) {
+      filteredProjects = filteredProjects.filter(project => 
+        project.tags && project.tags.includes(selectedTag)
+      );
+    }
+    
+    // 검색어 필터 적용 (제목과 설명 모두 검색)
+    if (searchQuery) {
+      filteredProjects = filteredProjects.filter(project => {
+        const nameMatch = project.name.toLowerCase().includes(searchQuery);
+        const descriptionMatch = project.description 
+          ? project.description.toLowerCase().includes(searchQuery)
+          : false;
+        return nameMatch || descriptionMatch;
+      });
+    }
     
     displayProjects(filteredProjects);
+  }
+
+  function displaySearchResults(projects) {
+    const resultsContainer = document.getElementById('search-results-container');
+    resultsContainer.innerHTML = '';
+
+    if (projects.length === 0 && searchQuery) {
+      resultsContainer.innerHTML = '<p class="no-search-results">검색 결과가 없습니다.</p>';
+      return;
+    }
+
+    if (projects.length === 0) {
+      return;
+    }
+
+    projects.forEach(project => {
+      const resultItem = createSearchResultItem(project);
+      resultsContainer.appendChild(resultItem);
+    });
+  }
+
+  function createSearchResultItem(project) {
+    const item = document.createElement('div');
+    item.className = 'search-result-item';
+    
+    const tags = project.tags ? project.tags.map(tag => 
+      `<span class="search-result-tag">${tag}</span>`
+    ).join('') : '';
+    
+    const formatDate = (dateString) => {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}년 ${month}월 ${day}일`;
+    };
+    
+    item.innerHTML = `
+      <h3 class="search-result-title">${project.name}</h3>
+      ${tags ? `<div class="search-result-tags">${tags}</div>` : ''}
+      <p class="search-result-description">${project.description || '설명이 없습니다.'}</p>
+      <div class="search-result-links">
+        ${project.github ? `<a href="${project.github}" target="_blank" class="search-result-link">GitHub</a>` : ''}
+        ${project.demo ? `<a href="${project.demo}" target="_blank" class="search-result-link">Demo</a>` : ''}
+        ${project.docs ? `<a href="${project.docs}" target="_blank" class="search-result-link">Docs</a>` : ''}
+      </div>
+      ${project.addedDate ? `<div class="search-result-date">${formatDate(project.addedDate)}</div>` : ''}
+    `;
+    
+    return item;
   }
 
   function displayProjects(projects) {
@@ -118,7 +284,12 @@ layout: default
     grid.innerHTML = '';
     
     if (projects.length === 0) {
-      grid.innerHTML = '<p class="no-projects">해당 태그의 프로젝트가 없습니다.</p>';
+      const message = searchQuery 
+        ? `"${searchQuery}" 검색 결과가 없습니다.`
+        : selectedTag 
+          ? '해당 태그의 프로젝트가 없습니다.'
+          : '프로젝트가 없습니다.';
+      grid.innerHTML = `<p class="no-projects">${message}</p>`;
       return;
     }
     
