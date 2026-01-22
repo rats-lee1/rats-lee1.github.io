@@ -81,6 +81,10 @@ layout: default
   let allProjects = [];
   let selectedTag = null;
   let searchQuery = '';
+  let currentDisplayedProjects = [];
+  let displayedCount = 0;
+  let lastScrollTop = 0;
+  const ITEMS_PER_PAGE = 5;
 
   // 전체 화면 검색 모달 열기
   function openSearchModal() {
@@ -135,14 +139,87 @@ layout: default
         performSearch();
       });
       
-      // 프로젝트 표시
-      displayProjects(allProjects);
+      // 프로젝트 표시 (초기 5개만)
+      applyFilters();
+      
+      // 무한 스크롤 이벤트 리스너 추가
+      setupInfiniteScroll();
     })
     .catch(error => {
       console.error('프로젝트 데이터를 불러오는 중 오류가 발생했습니다:', error);
       document.getElementById('projects-grid').innerHTML = 
         '<p class="no-projects">프로젝트 데이터를 불러올 수 없습니다.</p>';
     });
+  
+  // 무한 스크롤 설정
+  function setupInfiniteScroll() {
+    let isLoading = false;
+    
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      
+      // 스크롤을 위로 올리면 추가 로드된 항목 제거
+      if (scrollTop < lastScrollTop && displayedCount > ITEMS_PER_PAGE) {
+        resetToInitialItems();
+      }
+      
+      lastScrollTop = scrollTop;
+      
+      // 이미 로딩 중이거나 모든 항목을 표시한 경우 무시
+      if (isLoading || displayedCount >= currentDisplayedProjects.length) {
+        return;
+      }
+      
+      // 스크롤이 하단에 가까워졌는지 확인
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      
+      // 하단 200px 전에 도달하면 다음 페이지 로드
+      if (scrollTop + windowHeight >= documentHeight - 200) {
+        isLoading = true;
+        loadMoreProjects();
+        isLoading = false;
+      }
+    });
+  }
+  
+  // 초기 항목만 표시하도록 리셋
+  function resetToInitialItems() {
+    const grid = document.getElementById('projects-grid');
+    if (!grid) return;
+    
+    // 처음 5개만 다시 표시
+    grid.innerHTML = '';
+    const initialProjects = currentDisplayedProjects.slice(0, ITEMS_PER_PAGE);
+    
+    initialProjects.forEach(project => {
+      const card = createProjectCard(project);
+      grid.appendChild(card);
+    });
+    
+    displayedCount = Math.min(ITEMS_PER_PAGE, currentDisplayedProjects.length);
+  }
+  
+  // 더 많은 프로젝트 로드
+  function loadMoreProjects() {
+    const nextCount = Math.min(displayedCount + ITEMS_PER_PAGE, currentDisplayedProjects.length);
+    const projectsToAdd = currentDisplayedProjects.slice(displayedCount, nextCount);
+    
+    const grid = document.getElementById('projects-grid');
+    if (!grid) return;
+    
+    projectsToAdd.forEach(project => {
+      const card = createProjectCard(project);
+      grid.appendChild(card);
+    });
+    
+    displayedCount = nextCount;
+    
+    // 모든 프로젝트를 표시한 경우 스크롤 이벤트 제거 고려
+    if (displayedCount >= currentDisplayedProjects.length) {
+      // 더 이상 로드할 항목이 없음을 표시할 수 있음
+    }
+  }
 
   function createTagFilters(projects) {
     const tagContainer = document.getElementById('tag-filter-container');
@@ -225,7 +302,13 @@ layout: default
       });
     }
     
-    displayProjects(filteredProjects);
+    // 필터링된 프로젝트 저장
+    currentDisplayedProjects = filteredProjects;
+    displayedCount = 0;
+    
+    // 초기 5개만 표시
+    displayProjects(filteredProjects.slice(0, ITEMS_PER_PAGE));
+    displayedCount = Math.min(ITEMS_PER_PAGE, filteredProjects.length);
   }
 
   function displaySearchResults(projects) {
@@ -281,9 +364,14 @@ layout: default
 
   function displayProjects(projects) {
     const grid = document.getElementById('projects-grid');
-    grid.innerHTML = '';
+    if (!grid) return;
     
-    if (projects.length === 0) {
+    // 초기 로드 시에만 grid 초기화
+    if (displayedCount === 0) {
+      grid.innerHTML = '';
+    }
+    
+    if (projects.length === 0 && displayedCount === 0) {
       const message = searchQuery 
         ? `"${searchQuery}" 검색 결과가 없습니다.`
         : selectedTag 
