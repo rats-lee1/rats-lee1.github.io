@@ -29,6 +29,16 @@
         "tags": ["AI", "Agile", "Agents", "Workflows", "Node.js"],
         "addedBy": "",
         "addedDate": "2026-01-21"
-    }
+    },
+    {
+        "name": "Azure Diagrams Diagram",
+        "description": "Azure 다이어그램 공유/편집 링크로, 사용자가 Azure 아키텍처 구성 요소를 시각적으로 설계 및 문서화한 다이어그램입니다. Azure Diagrams는 팀 기반 클라우드 아키텍처 다이어그램 작성 및 공유 도구로, 협업 설계와 Azure 서비스 관계 표현을 지원합니다.",
+        "github": "",
+        "demo": "https://azurediagrams.com/OP8G8Szl",
+        "docs": "https://azurediagrams.com/",
+        "tags": ["Azure", "Diagram", "Architecture", "Collaborative"],
+        "addedBy": "",
+        "addedDate": "2026-01-22"
+      }
   ]
 }
