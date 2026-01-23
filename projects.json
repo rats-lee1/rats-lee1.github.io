@@ -1,6 +1,26 @@
 {
   "projects": [
     {
+        "name": "cursortab.nvim",
+        "description": "Neovim에서 Cursor AI 스타일의 탭 자동완성 UX를 구현한 플러그인입니다. 기존 completion 메뉴가 아닌, 현재 커서 위치에 인라인으로 제안 텍스트를 표시하고 Tab 키로 자연스럽게 수락할 수 있도록 설계되었습니다.",
+        "github": "https://github.com/leonardcser/cursortab.nvim",
+        "demo": "",
+        "docs": "https://github.com/leonardcser/cursortab.nvim#readme",
+        "tags": ["Neovim", "Lua", "Editor Plugin", "Autocomplete", "Developer Tool"],
+        "addedBy": "",
+        "addedDate": "2026-01-22"
+    },
+    {
+        "name": "Continue (VS Code Extension)",
+        "description": "VS Code에서 동작하는 오픈소스 AI 코딩 어시스턴트로, 코드 작성·리팩토링·리뷰·질문 응답을 IDE 안에서 직접 수행할 수 있게 해줍니다. OpenAI, Azure OpenAI, Anthropic, Ollama 등 다양한 LLM을 자유롭게 연결할 수 있는 것이 가장 큰 특징입니다.",
+        "github": "https://github.com/continuedev/continue",
+        "demo": "",
+        "docs": "https://docs.continue.dev/",
+        "tags": ["VSCode", "AI", "Coding Assistant", "LLM", "Developer Tool"],
+        "addedBy": "",
+        "addedDate": "2026-01-23"
+    },
+    {
       "name": "AutoMem",
       "description": "AI 어시스턴트용 장기 메모리 시스템 — 그래프 + 벡터 기반 메모리로 관계형 기억과 컨텍스트를 유지하여 AI가 과거 대화를 학습하고 추론할 수 있게 하는 서비스입니다.",
       "github": "https://github.com/verygoodplugins/automem",
@@ -31,7 +51,7 @@
         "addedDate": "2026-01-21"
     },
     {
-        "name": "Azure Diagrams Diagram",
+        "name": "Azure Diagrams",
         "description": "Azure 다이어그램 공유/편집 링크로, 사용자가 Azure 아키텍처 구성 요소를 시각적으로 설계 및 문서화한 다이어그램입니다. Azure Diagrams는 팀 기반 클라우드 아키텍처 다이어그램 작성 및 공유 도구로, 협업 설계와 Azure 서비스 관계 표현을 지원합니다.",
         "github": "",
         "demo": "https://azurediagrams.com/OP8G8Szl",
