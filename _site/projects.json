@@ -1,6 +1,22 @@
 {
   "projects": [
     {
+        "name": "LangGraph Compass",
+        "description": "LangGraph 에이전트를 위한 **지능형 팔로우업 질문(follow-up question) 생성 라이브러리**입니다. 단순 프롬프트 기반이 아닌, 독립적인 LangGraph 노드로 동작하며 가드레일 인식, 기능 범위 제한, 중복 방지, 병렬 실행을 통해 에이전트를 반응형(responsive)에서 **능동적(proactive) 대화 파트너**로 전환합니다. Cisco 환경에서 실전 검증된 설계를 기반으로 합니다.",
+        "github": "https://github.com/sardanaaman/langgraph-compass",
+        "demo": "https://sardanaaman-langgraph-compass-demo.hf.space/",
+        "docs": "https://github.com/sardanaaman/langgraph-compass#readme",
+        "tags": [
+          "LangGraph",
+          "Follow-up Questions",
+          "Conversational AI",
+          "Agentic AI",
+          "Python"
+        ],
+        "addedBy": "",
+        "addedDate": "2026-01-26"
+    },
+    {
         "name": "cursortab.nvim",
         "description": "Neovim에서 Cursor AI 스타일의 탭 자동완성 UX를 구현한 플러그인입니다. 기존 completion 메뉴가 아닌, 현재 커서 위치에 인라인으로 제안 텍스트를 표시하고 Tab 키로 자연스럽게 수락할 수 있도록 설계되었습니다.",
         "github": "https://github.com/leonardcser/cursortab.nvim",
@@ -8,7 +24,7 @@
         "docs": "https://github.com/leonardcser/cursortab.nvim#readme",
         "tags": ["Neovim", "Lua", "Editor Plugin", "Autocomplete", "Developer Tool"],
         "addedBy": "",
-        "addedDate": "2026-01-22"
+        "addedDate": "2026-01-23"
     },
     {
         "name": "Continue (VS Code Extension)",
