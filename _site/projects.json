@@ -1,6 +1,22 @@
 {
   "projects": [
     {
+      "name": "DeepSeek-OCR-2",
+      "description": "문서·이미지 기반 텍스트 인식을 위한 대규모 멀티모달 OCR 모델입니다. 단순 문자 추출을 넘어, 복잡한 문서 레이아웃·표·수식·다국어 텍스트를 이해하고 구조화된 출력으로 변환하는 데 초점을 둔 차세대 OCR 모델입니다.",
+      "github": "",
+      "demo": "https://huggingface.co/deepseek-ai/DeepSeek-OCR-2",
+      "docs": "",
+      "tags": [
+        "OCR",
+        "Multimodal AI",
+        "Document Understanding",
+        "Vision-Language Model",
+        "DeepSeek"
+      ],
+      "addedBy": "",
+      "addedDate": "2026-01-28"
+    },
+    {
         "name": "LangGraph Compass",
         "description": "LangGraph 에이전트를 위한 **지능형 팔로우업 질문(follow-up question) 생성 라이브러리**입니다. 단순 프롬프트 기반이 아닌, 독립적인 LangGraph 노드로 동작하며 가드레일 인식, 기능 범위 제한, 중복 방지, 병렬 실행을 통해 에이전트를 반응형(responsive)에서 **능동적(proactive) 대화 파트너**로 전환합니다. Cisco 환경에서 실전 검증된 설계를 기반으로 합니다.",
         "github": "https://github.com/sardanaaman/langgraph-compass",

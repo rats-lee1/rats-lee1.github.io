@@ -27,7 +27,7 @@ bundle install
 bundle exec jekyll serve
 ```
 
-브라우저에서 `http://localhost:4000`으로 접속하세요.
+브라우저에서 `http://localhost:4001`으로 접속하세요.
 
 ## 프로젝트 추가하기
 
